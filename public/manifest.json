@@ -1,0 +1,22 @@
+
+{
+  "id": "/",
+  "name": "QuickBite - Grocery Delivery",
+  "short_name": "QuickBite",
+  "description": "Fresh groceries delivered to your doorstep.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "categories": ["shopping", "food"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

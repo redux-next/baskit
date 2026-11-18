@@ -12,6 +12,8 @@ import {
 import {
   onAuthStateChanged,
   signInWithPopup,
+  signInWithCredential,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
@@ -21,6 +23,69 @@ import {
 import { auth, googleProvider } from "../lib/firebase";
 
 const AuthContext = createContext(null);
+
+// Detect the actual Baskit Android WebView, not ordinary mobile Chrome.
+function isBaskitAndroidApp() {
+  if (typeof navigator === "undefined") return false;
+
+  return navigator.userAgent.includes("BaskitAndroidApp");
+}
+
+// Request a Google ID token from the native Android application.
+function requestNativeGoogleToken() {
+  return new Promise((resolve, reject) => {
+    if (!isBaskitAndroidApp()) {
+      reject(new Error("Baskit Android app was not detected."));
+      return;
+    }
+
+    let completed = false;
+
+    const cleanup = () => {
+      window.onNativeGoogleSignInResult = null;
+      clearTimeout(timeout);
+    };
+
+    const finish = (callback, value) => {
+      if (completed) return;
+
+      completed = true;
+      cleanup();
+      callback(value);
+    };
+
+    const timeout = setTimeout(() => {
+      finish(
+        reject,
+        new Error("Google sign-in timed out. Please try again.")
+      );
+    }, 120000);
+
+    window.onNativeGoogleSignInResult = (idToken, error) => {
+      if (error) {
+        finish(reject, new Error(error));
+        return;
+      }
+
+      if (!idToken || typeof idToken !== "string") {
+        finish(
+          reject,
+          new Error("Google did not return a valid ID token.")
+        );
+        return;
+      }
+
+      finish(resolve, idToken);
+    };
+
+    try {
+      // Android intercepts this URL and opens Credential Manager.
+      window.location.href = "baskit://google-sign-in";
+    } catch (error) {
+      finish(reject, error);
+    }
+  });
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -55,7 +120,10 @@ export function AuthProvider({ children }) {
 
           setClaims(tokenResult.claims || {});
         } catch (error) {
-          console.error("Unable to load Firebase custom claims:", error);
+          console.error(
+            "Unable to load Firebase custom claims:",
+            error
+          );
 
           if (!active || requestId !== authRequest) return;
 
@@ -75,8 +143,22 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
+  // Google Sign-In:
+  // Native Credential Manager in Baskit Android app.
+  // Firebase popup in normal browsers.
   const loginWithGoogle = useCallback(async () => {
-    const result = await signInWithPopup(auth, googleProvider);
+    let result;
+
+    if (isBaskitAndroidApp()) {
+      const idToken = await requestNativeGoogleToken();
+
+      const credential =
+        GoogleAuthProvider.credential(idToken);
+
+      result = await signInWithCredential(auth, credential);
+    } else {
+      result = await signInWithPopup(auth, googleProvider);
+    }
 
     const tokenResult =
       await result.user.getIdTokenResult(true);
@@ -87,22 +169,27 @@ export function AuthProvider({ children }) {
     return result.user;
   }, []);
 
-  const loginWithEmail = useCallback(async (email, password) => {
-    const result = await signInWithEmailAndPassword(
-      auth,
-      email.trim(),
-      password
-    );
+  // Email/password login remains unchanged.
+  const loginWithEmail = useCallback(
+    async (email, password) => {
+      const result = await signInWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password
+      );
 
-    const tokenResult =
-      await result.user.getIdTokenResult(true);
+      const tokenResult =
+        await result.user.getIdTokenResult(true);
 
-    setUser(result.user);
-    setClaims(tokenResult.claims || {});
+      setUser(result.user);
+      setClaims(tokenResult.claims || {});
 
-    return result.user;
-  }, []);
+      return result.user;
+    },
+    []
+  );
 
+  // Email/password registration remains unchanged.
   const registerWithEmail = useCallback(
     async (name, email, password) => {
       const result = await createUserWithEmailAndPassword(
