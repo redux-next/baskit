@@ -362,7 +362,14 @@ export default function Home() {
   }
 
   return (
-    <main className="storefront">
+    <main
+  className={`storefront ${
+    typeof window !== "undefined" &&
+    window.matchMedia("(display-mode: standalone)").matches
+      ? "pwa-mode"
+      : ""
+  }`}
+>
       <div className="announcement">
         <span className="announcement-sparkle">✳</span>
         A little less waiting, a lot more living.
@@ -414,37 +421,6 @@ export default function Home() {
     />
   </div>
 </Link>
-
-        <Link
-          className="location-button"
-          href="/complete-profile"
-          aria-label="Update your delivery address"
-          title="Click to update your delivery address"
-        >
-          <span className="location-icon">
-            <Icon name="pin" size={18} />
-          </span>
-
-          <span className="location-copy">
-            <span className="location-label">
-              {profileLoading
-                ? "Loading address"
-                : "Delivering to"}
-            </span>
-
-            <strong>
-              {customerProfile?.address
-                ? `${customerProfile.address}${
-                    customerProfile.pincode
-                      ? `, ${customerProfile.pincode}`
-                      : ""
-                  }`
-                : "Add delivery address"}
-            </strong>
-          </span>
-
-          <Icon name="chevron" size={17} />
-        </Link>
 
         <form
           className="search-box"

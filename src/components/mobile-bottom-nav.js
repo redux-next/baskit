@@ -48,6 +48,15 @@ function NavigationIcon({ name }) {
     );
   }
 
+  if (name === "profile") {
+    return (
+      <svg {...shared}>
+        <circle cx="12" cy="8" r="3.5" />
+        <path d="M5 21a7 7 0 0 1 14 0" />
+      </svg>
+    );
+  }
+
   return (
     <svg {...shared}>
       <path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 1.9-1.4L20 9H6" />
@@ -66,10 +75,18 @@ export default function MobileBottomNav() {
     0
   );
   const visibleRoutes = ["/", "/cart", "/checkout", "/orders"];
+  const isOrdersActive =
+    pathname === "/orders" ||
+    pathname?.startsWith("/orders/") ||
+    pathname?.startsWith("/track-order/");
+  const isProfileActive =
+    pathname === "/profile" || pathname?.startsWith("/profile/");
 
   if (
     !visibleRoutes.includes(pathname) &&
-    !pathname?.startsWith("/products/")
+    !pathname?.startsWith("/products/") &&
+    !isProfileActive &&
+    !pathname?.startsWith("/track-order/")
   ) {
     return null;
   }
@@ -97,8 +114,19 @@ export default function MobileBottomNav() {
       </Link>
 
       <Link
+        href="/profile"
+        className="mobile-nav-item"
+        aria-current={isProfileActive ? "page" : undefined}
+        aria-label="Profile"
+      >
+        <NavigationIcon name="profile" />
+        <span>Profile</span>
+      </Link>
+
+      <Link
         href="/orders"
         className="mobile-nav-item"
+        aria-current={isOrdersActive ? "page" : undefined}
         aria-label="My Orders"
       >
         <NavigationIcon name="orders" />
