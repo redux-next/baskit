@@ -2,17 +2,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { sendPasswordResetEmail } from "firebase/auth";
 
-import { useAuth } from "../../components/auth-provider";
-import { auth } from "../../lib/firebase";
+import { useDailyCartAuth } from "@/components/auth-provider";
+import { auth } from "@/lib/firebase";
 
 export default function LoginClient() {
   const router = useRouter();
 
-  const { user, loading, loginWithGoogle, loginWithEmail } = useAuth();
+  const {
+    user,
+    loading,
+    loginWithGoogle,
+    loginWithEmail,
+  } = useDailyCartAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,20 +39,27 @@ export default function LoginClient() {
     switch (err.code) {
       case "auth/invalid-email":
         return "Please enter a valid email address.";
+
       case "auth/invalid-credential":
       case "auth/wrong-password":
       case "auth/user-not-found":
         return "Incorrect email or password.";
+
       case "auth/user-disabled":
         return "This account has been disabled.";
+
       case "auth/too-many-requests":
         return "Too many attempts. Please try again later.";
+
       case "auth/network-request-failed":
         return "Network error. Please check your internet connection.";
+
       case "auth/unauthorized-domain":
         return "This domain is not authorized in Firebase.";
+
       case "auth/popup-closed-by-user":
         return "Sign-in was cancelled. Please try again.";
+
       default:
         return err.message || "Something went wrong. Please try again.";
     }
@@ -115,6 +128,7 @@ export default function LoginClient() {
       <main className="min-h-screen flex items-center justify-center bg-[#f7faf7]">
         <div className="text-center">
           <div className="h-9 w-9 mx-auto rounded-full border-4 border-green-200 border-t-green-600 animate-spin" />
+
           <p className="mt-4 text-sm text-gray-500">
             {user ? "Taking you to DailyCart..." : "Loading..."}
           </p>
@@ -127,22 +141,41 @@ export default function LoginClient() {
     <main className="min-h-screen bg-[#f7faf7] flex items-center justify-center px-5 py-10">
       <div className="w-full max-w-md">
 
-        <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="h-11 w-11 rounded-2xl bg-green-600 text-white flex items-center justify-center text-2xl">
-            🛍️
-          </div>
-
-          <span className="text-2xl font-extrabold tracking-tight text-gray-900">
-            Daily<span className="text-green-600">Cart</span>
-          </span>
-        </Link>
-
         <section className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-green-900/5 p-7 sm:p-9">
-
           <div className="text-center mb-8">
-            <div className="mx-auto mb-5 h-16 w-16 rounded-2xl bg-green-50 flex items-center justify-center text-3xl">
-              🥑
-            </div>
+        <Link
+          href="/"
+          aria-label="DailyCart home"
+          className="flex items-center justify-center mb-8"
+          style={{
+            margin: "0 auto 32px",
+            padding: 0,
+            width: "180px",
+            height: "55px",
+            overflow: "hidden",
+            backgroundColor: "#f6f8f4",
+            borderRadius: "6px",
+            lineHeight: 0,
+            textDecoration: "none",
+          }}
+        >
+          <Image
+            src="/dailycart_loading_logo.png"
+            alt="DailyCart"
+            width={220}
+            height={74}
+            priority
+            style={{
+              display: "block",
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+              margin: 0,
+              padding: 0,
+            }}
+          />
+        </Link>
 
             <h1 className="text-2xl font-bold text-gray-900">
               Welcome to DailyCart
@@ -166,9 +199,7 @@ export default function LoginClient() {
             </div>
           )}
 
-          {/* Email Login */}
           <form onSubmit={handleEmailLogin} className="space-y-4">
-
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Email address
@@ -236,34 +267,48 @@ export default function LoginClient() {
                 "Sign in with Email"
               )}
             </button>
-
           </form>
 
-          {/* Divider */}
           <div className="flex items-center gap-3 my-7">
             <div className="h-px flex-1 bg-gray-100" />
-            <span className="text-xs text-gray-400">OR CONTINUE WITH</span>
+            <span className="text-xs text-gray-400">
+              OR CONTINUE WITH
+            </span>
             <div className="h-px flex-1 bg-gray-100" />
           </div>
 
-          {/* Google Login */}
           <button
             type="button"
             onClick={handleGoogleSignIn}
             disabled={signingIn || resetting}
             className="w-full flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-5 py-3.5 text-sm font-semibold text-gray-800 transition hover:bg-gray-50 hover:border-gray-300 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
-              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
-              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.96 46.98 31.89 46.98 24.55z" />
-              <path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z" />
-              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.9 2.3-8.18 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+            <svg
+              viewBox="0 0 48 48"
+              className="h-5 w-5"
+              aria-hidden="true"
+            >
+              <path
+                fill="#EA4335"
+                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+              />
+              <path
+                fill="#4285F4"
+                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.96 46.98 31.89 46.98 24.55z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z"
+              />
+              <path
+                fill="#34A853"
+                d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.9 2.3-8.18 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+              />
             </svg>
 
             Continue with Google
           </button>
 
-          {/* Registration */}
           <div className="mt-7 text-center">
             <p className="text-sm text-gray-500">
               Don't have an account?{" "}
@@ -279,13 +324,11 @@ export default function LoginClient() {
           <div className="mt-7 text-center text-green-700">
             <b>Chabua Only!</b>
           </div>
-
         </section>
 
         <p className="text-center text-xs text-gray-400 mt-7">
           Freshness delivered to your doorstep.
         </p>
-
       </div>
     </main>
   );

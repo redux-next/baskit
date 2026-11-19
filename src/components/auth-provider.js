@@ -81,7 +81,7 @@ function requestNativeGoogleToken() {
     };
 
     try {
-      // IMPORTANT: Must match MainActivity.kt exactly.
+      // Must match MainActivity.kt exactly.
       window.location.href = "baskit://google-sign-in";
     } catch (error) {
       finish(reject, error);
@@ -98,38 +98,45 @@ export function AuthProvider({ children }) {
     let active = true;
     let authRequest = 0;
 
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      const requestId = ++authRequest;
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      async (currentUser) => {
+        const requestId = ++authRequest;
 
-      setLoading(true);
-      setUser(currentUser);
-      setClaims({});
-
-      if (!currentUser) {
-        if (active && requestId === authRequest) {
-          setLoading(false);
-        }
-        return;
-      }
-
-      try {
-        const tokenResult = await currentUser.getIdTokenResult(true);
-
-        if (!active || requestId !== authRequest) return;
-
-        setClaims(tokenResult.claims || {});
-      } catch (error) {
-        console.error("Unable to load Firebase custom claims:", error);
-
-        if (!active || requestId !== authRequest) return;
-
+        setLoading(true);
+        setUser(currentUser);
         setClaims({});
-      } finally {
-        if (active && requestId === authRequest) {
-          setLoading(false);
+
+        if (!currentUser) {
+          if (active && requestId === authRequest) {
+            setLoading(false);
+          }
+          return;
+        }
+
+        try {
+          const tokenResult =
+            await currentUser.getIdTokenResult(true);
+
+          if (!active || requestId !== authRequest) return;
+
+          setClaims(tokenResult.claims || {});
+        } catch (error) {
+          console.error(
+            "Unable to load Firebase custom claims:",
+            error
+          );
+
+          if (!active || requestId !== authRequest) return;
+
+          setClaims({});
+        } finally {
+          if (active && requestId === authRequest) {
+            setLoading(false);
+          }
         }
       }
-    });
+    );
 
     return () => {
       active = false;
@@ -147,14 +154,16 @@ export function AuthProvider({ children }) {
     if (isDailyCartAndroidApp()) {
       const idToken = await requestNativeGoogleToken();
 
-      const credential = GoogleAuthProvider.credential(idToken);
+      const credential =
+        GoogleAuthProvider.credential(idToken);
 
       result = await signInWithCredential(auth, credential);
     } else {
       result = await signInWithPopup(auth, googleProvider);
     }
 
-    const tokenResult = await result.user.getIdTokenResult(true);
+    const tokenResult =
+      await result.user.getIdTokenResult(true);
 
     setUser(result.user);
     setClaims(tokenResult.claims || {});
@@ -163,20 +172,24 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Email/password login.
-  const loginWithEmail = useCallback(async (email, password) => {
-    const result = await signInWithEmailAndPassword(
-      auth,
-      email.trim(),
-      password
-    );
+  const loginWithEmail = useCallback(
+    async (email, password) => {
+      const result = await signInWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password
+      );
 
-    const tokenResult = await result.user.getIdTokenResult(true);
+      const tokenResult =
+        await result.user.getIdTokenResult(true);
 
-    setUser(result.user);
-    setClaims(tokenResult.claims || {});
+      setUser(result.user);
+      setClaims(tokenResult.claims || {});
 
-    return result.user;
-  }, []);
+      return result.user;
+    },
+    []
+  );
 
   // Email/password registration.
   const registerWithEmail = useCallback(
@@ -191,7 +204,8 @@ export function AuthProvider({ children }) {
         displayName: name.trim(),
       });
 
-      const tokenResult = await result.user.getIdTokenResult(true);
+      const tokenResult =
+        await result.user.getIdTokenResult(true);
 
       setUser(result.user);
       setClaims(tokenResult.claims || {});
@@ -209,7 +223,9 @@ export function AuthProvider({ children }) {
       return {};
     }
 
-    const tokenResult = await currentUser.getIdTokenResult(true);
+    const tokenResult =
+      await currentUser.getIdTokenResult(true);
+
     const latestClaims = tokenResult.claims || {};
 
     setUser(currentUser);
@@ -247,12 +263,18 @@ export function AuthProvider({ children }) {
   );
 }
 
-export function useAuth() {
+// Main DailyCart authentication hook.
+export function useDailyCartAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuth must be used inside AuthProvider");
+    throw new Error(
+      "useDailyCartAuth must be used inside AuthProvider"
+    );
   }
 
   return context;
 }
+
+// Backward compatibility for existing components.
+export const useAuth = useDailyCartAuth;

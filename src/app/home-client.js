@@ -372,14 +372,48 @@ export default function Home() {
       </div>
 
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="DailyCart home">
-          <span className="brand-mark">
-            <span />
-          </span>
-          <span>
-            DailyCart<span className="brand-period">.</span>
-          </span>
-        </a>
+<Link
+  className="brand"
+  href="#top"
+  aria-label="DailyCart home"
+  style={{
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: 0,
+    padding: 0,
+    flexShrink: 0,
+    lineHeight: 0,
+    textDecoration: "none",
+  }}
+>
+  <div
+    style={{
+      position: "relative",
+      width: "180px",
+      height: "55px",
+      overflow: "hidden",
+      backgroundColor: "#f6f8f4",
+      borderRadius: "6px",
+      margin: 0,
+      padding: 0,
+    }}
+  >
+    <Image
+      src="/dailycart-logo.png"
+      alt="DailyCart"
+      fill
+      priority
+      sizes="180px"
+      style={{
+        objectFit: "cover",
+        objectPosition: "center",
+        margin: 0,
+        padding: 0,
+      }}
+    />
+  </div>
+</Link>
 
         <Link
           className="location-button"

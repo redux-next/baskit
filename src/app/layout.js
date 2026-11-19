@@ -20,28 +20,13 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "DailyCart",
-  description:
-    "Fresh groceries and everyday essentials delivered to your doorstep.",
-
-  applicationName: "DailyCart",
-  manifest: "/manifest.json",
-  openGraph: {
-    title: "DailyCart",
-    description:
-      "Fresh groceries and everyday essentials delivered to your doorstep.",
-  },
-
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "DailyCart",
-  },
-
+  description: "Fresh groceries delivered to your doorstep.",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/dailycart_icon.png",
+    shortcut: "/dailycart_icon.png",
+    apple: "/dailycart_icon.png",
   },
 };
-
 export const viewport = {
   width: "device-width",
   initialScale: 1,
