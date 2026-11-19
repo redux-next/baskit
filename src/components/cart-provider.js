@@ -38,13 +38,29 @@ function validateCart(savedCart) {
   );
 }
 
+
 async function readResponse(response, fallbackMessage) {
+  const responseText = await response.text();
+
+  if (!responseText) {
+    throw new Error(
+      `Server returned an empty response (HTTP ${response.status}).`
+    );
+  }
+
   let result;
 
   try {
-    result = await response.json();
+    result = JSON.parse(responseText);
   } catch (error) {
-    throw new Error(fallbackMessage, { cause: error });
+    console.error("Invalid API response:", {
+      status: response.status,
+      body: responseText.slice(0, 500),
+    });
+
+    throw new Error(
+      `Server returned an invalid response (HTTP ${response.status}).`
+    );
   }
 
   if (
@@ -58,6 +74,7 @@ async function readResponse(response, fallbackMessage) {
 
   return result;
 }
+
 
 export function CartProvider({ children }) {
   const { user, loading: authLoading } = useAuth();
