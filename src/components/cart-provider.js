@@ -29,7 +29,9 @@ function validateCart(savedCart) {
     Object.entries(savedCart).filter(
       ([id, quantity]) =>
         typeof id === "string" &&
-        /^\d+$/.test(id) &&
+        id.trim().length > 0 &&
+        id.length <= 128 &&
+        !["__proto__", "constructor", "prototype"].includes(id) &&
         Number.isSafeInteger(quantity) &&
         quantity > 0
     )

@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 
@@ -32,7 +33,8 @@ async function getAuthenticatedUser(request) {
       user: await adminAuth.verifyIdToken(idToken, true),
     };
   } catch (error) {
-    console.error("Cart authentication failed:", error);
+    console.error("Cart authentication failed:", error.code, error.message);
+
     return {
       error: responseError(
         "Your session has expired. Please sign in again.",
@@ -43,7 +45,11 @@ async function getAuthenticatedUser(request) {
 }
 
 function validateCart(cart) {
-  if (!cart || typeof cart !== "object" || Array.isArray(cart)) {
+  if (
+    !cart ||
+    typeof cart !== "object" ||
+    Array.isArray(cart)
+  ) {
     return null;
   }
 
@@ -51,8 +57,9 @@ function validateCart(cart) {
 
   for (const [productId, quantity] of Object.entries(cart)) {
     if (
-      !/^\d+$/.test(productId) ||
+      !productId.trim() ||
       productId.length > 128 ||
+      ["__proto__", "constructor", "prototype"].includes(productId) ||
       !Number.isSafeInteger(quantity) ||
       quantity < 1
     ) {
@@ -75,12 +82,20 @@ export async function GET(request) {
       .collection("carts")
       .doc(authentication.user.uid)
       .get();
-    const cart = validateCart(
-      snapshot.exists ? snapshot.get("items") || {} : {}
-    );
+
+    const storedItems = snapshot.exists
+      ? snapshot.get("items") || {}
+      : {};
+
+    const cart = validateCart(storedItems);
 
     if (!cart) {
-      throw new Error("Stored account cart is invalid.");
+      console.error(
+        "Invalid stored cart for user:",
+        authentication.user.uid
+      );
+
+      throw new Error("Stored account cart has invalid contents.");
     }
 
     return NextResponse.json({
@@ -88,8 +103,15 @@ export async function GET(request) {
       cart,
     });
   } catch (error) {
-    console.error("Unable to load account cart:", error);
-    return responseError("Unable to load your saved cart.", 500);
+    console.error("Unable to load account cart:", {
+      code: error.code,
+      message: error.message,
+    });
+
+    return responseError(
+      "Unable to load your saved cart.",
+      500
+    );
   }
 }
 
@@ -103,7 +125,6 @@ export async function PUT(request) {
   try {
     body = await request.json();
   } catch (error) {
-    console.error("Invalid cart request body:", error);
     return responseError("Invalid cart request.");
   }
 
@@ -127,7 +148,14 @@ export async function PUT(request) {
       message: "Cart saved.",
     });
   } catch (error) {
-    console.error("Unable to save account cart:", error);
-    return responseError("Unable to save your account cart.", 500);
+    console.error("Unable to save account cart:", {
+      code: error.code,
+      message: error.message,
+    });
+
+    return responseError(
+      "Unable to save your account cart.",
+      500
+    );
   }
 }
