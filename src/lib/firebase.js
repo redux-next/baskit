@@ -15,13 +15,13 @@ if (!firebaseConfig.apiKey) {
   throw new Error("Firebase API key is missing. Check .env.local");
 }
 
-console.log("Firebase configuration check:", {
-  apiKeyExists: !!firebaseConfig.apiKey,
-  apiKeyLength: firebaseConfig.apiKey?.length,
-  authDomainExists: !!firebaseConfig.authDomain,
-  projectIdExists: !!firebaseConfig.projectId,
-  appIdExists: !!firebaseConfig.appId,
-});
+// console.log("Firebase configuration check:", {
+//   apiKeyExists: !!firebaseConfig.apiKey,
+//   apiKeyLength: firebaseConfig.apiKey?.length,
+//   authDomainExists: !!firebaseConfig.authDomain,
+//   projectIdExists: !!firebaseConfig.projectId,
+//   appIdExists: !!firebaseConfig.appId,
+// });
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
