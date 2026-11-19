@@ -24,14 +24,14 @@ import { auth, googleProvider } from "../lib/firebase";
 
 const AuthContext = createContext(null);
 
-// Detect the existing Android app WebView, not ordinary mobile Chrome.
+// Detect the existing DailyCart Android WebView.
 function isDailyCartAndroidApp() {
   if (typeof navigator === "undefined") return false;
 
-  return navigator.userAgent.includes("QuickBiteAndroidApp");
+  return navigator.userAgent.includes("BaskitAndroidApp");
 }
 
-// Request a Google ID token from the native Android application.
+// Request a Google ID token from native Android.
 function requestNativeGoogleToken() {
   return new Promise((resolve, reject) => {
     if (!isDailyCartAndroidApp()) {
@@ -40,6 +40,7 @@ function requestNativeGoogleToken() {
     }
 
     let completed = false;
+    let timeout;
 
     const cleanup = () => {
       window.onNativeGoogleSignInResult = null;
@@ -54,13 +55,14 @@ function requestNativeGoogleToken() {
       callback(value);
     };
 
-    const timeout = setTimeout(() => {
+    timeout = setTimeout(() => {
       finish(
         reject,
         new Error("Google sign-in timed out. Please try again.")
       );
     }, 120000);
 
+    // Android calls this function after Credential Manager finishes.
     window.onNativeGoogleSignInResult = (idToken, error) => {
       if (error) {
         finish(reject, new Error(error));
@@ -79,8 +81,8 @@ function requestNativeGoogleToken() {
     };
 
     try {
-      // Android intercepts this URL and opens Credential Manager.
-      window.location.href = "QuickBite://google-sign-in";
+      // IMPORTANT: Must match MainActivity.kt exactly.
+      window.location.href = "baskit://google-sign-in";
     } catch (error) {
       finish(reject, error);
     }
@@ -96,45 +98,38 @@ export function AuthProvider({ children }) {
     let active = true;
     let authRequest = 0;
 
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      async (currentUser) => {
-        const requestId = ++authRequest;
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      const requestId = ++authRequest;
 
-        setLoading(true);
-        setUser(currentUser);
-        setClaims({});
+      setLoading(true);
+      setUser(currentUser);
+      setClaims({});
 
-        if (!currentUser) {
-          if (active && requestId === authRequest) {
-            setLoading(false);
-          }
-          return;
+      if (!currentUser) {
+        if (active && requestId === authRequest) {
+          setLoading(false);
         }
+        return;
+      }
 
-        try {
-          const tokenResult =
-            await currentUser.getIdTokenResult(true);
+      try {
+        const tokenResult = await currentUser.getIdTokenResult(true);
 
-          if (!active || requestId !== authRequest) return;
+        if (!active || requestId !== authRequest) return;
 
-          setClaims(tokenResult.claims || {});
-        } catch (error) {
-          console.error(
-            "Unable to load Firebase custom claims:",
-            error
-          );
+        setClaims(tokenResult.claims || {});
+      } catch (error) {
+        console.error("Unable to load Firebase custom claims:", error);
 
-          if (!active || requestId !== authRequest) return;
+        if (!active || requestId !== authRequest) return;
 
-          setClaims({});
-        } finally {
-          if (active && requestId === authRequest) {
-            setLoading(false);
-          }
+        setClaims({});
+      } finally {
+        if (active && requestId === authRequest) {
+          setLoading(false);
         }
       }
-    );
+    });
 
     return () => {
       active = false;
@@ -144,7 +139,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Google Sign-In:
-  // Native Credential Manager in the Android app.
+  // Native Credential Manager in DailyCart Android.
   // Firebase popup in normal browsers.
   const loginWithGoogle = useCallback(async () => {
     let result;
@@ -152,16 +147,14 @@ export function AuthProvider({ children }) {
     if (isDailyCartAndroidApp()) {
       const idToken = await requestNativeGoogleToken();
 
-      const credential =
-        GoogleAuthProvider.credential(idToken);
+      const credential = GoogleAuthProvider.credential(idToken);
 
       result = await signInWithCredential(auth, credential);
     } else {
       result = await signInWithPopup(auth, googleProvider);
     }
 
-    const tokenResult =
-      await result.user.getIdTokenResult(true);
+    const tokenResult = await result.user.getIdTokenResult(true);
 
     setUser(result.user);
     setClaims(tokenResult.claims || {});
@@ -169,27 +162,23 @@ export function AuthProvider({ children }) {
     return result.user;
   }, []);
 
-  // Email/password login remains unchanged.
-  const loginWithEmail = useCallback(
-    async (email, password) => {
-      const result = await signInWithEmailAndPassword(
-        auth,
-        email.trim(),
-        password
-      );
+  // Email/password login.
+  const loginWithEmail = useCallback(async (email, password) => {
+    const result = await signInWithEmailAndPassword(
+      auth,
+      email.trim(),
+      password
+    );
 
-      const tokenResult =
-        await result.user.getIdTokenResult(true);
+    const tokenResult = await result.user.getIdTokenResult(true);
 
-      setUser(result.user);
-      setClaims(tokenResult.claims || {});
+    setUser(result.user);
+    setClaims(tokenResult.claims || {});
 
-      return result.user;
-    },
-    []
-  );
+    return result.user;
+  }, []);
 
-  // Email/password registration remains unchanged.
+  // Email/password registration.
   const registerWithEmail = useCallback(
     async (name, email, password) => {
       const result = await createUserWithEmailAndPassword(
@@ -202,8 +191,7 @@ export function AuthProvider({ children }) {
         displayName: name.trim(),
       });
 
-      const tokenResult =
-        await result.user.getIdTokenResult(true);
+      const tokenResult = await result.user.getIdTokenResult(true);
 
       setUser(result.user);
       setClaims(tokenResult.claims || {});
@@ -221,9 +209,7 @@ export function AuthProvider({ children }) {
       return {};
     }
 
-    const tokenResult =
-      await currentUser.getIdTokenResult(true);
-
+    const tokenResult = await currentUser.getIdTokenResult(true);
     const latestClaims = tokenResult.claims || {};
 
     setUser(currentUser);
