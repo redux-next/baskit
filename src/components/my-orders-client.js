@@ -183,7 +183,7 @@ export default function MyOrdersClient() {
         <div className="flex items-center justify-between gap-3 mb-5 sm:mb-8">
           <div className="min-w-0">
             <p className="text-xs sm:text-sm font-bold text-green-700">
-              QUICKBITE
+              DailyCart
             </p>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1 sm:mt-2">
@@ -299,7 +299,7 @@ export default function MyOrdersClient() {
                       </p>
 
                       <p className="text-xs text-green-700 mt-1">
-                        Thank you for shopping with QuickBite!
+                        Thank you for shopping with DailyCart!
                       </p>
                     </div>
                   )}

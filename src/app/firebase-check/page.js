@@ -29,7 +29,7 @@ export default function FirebaseCheckPage() {
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-md w-full rounded-2xl border p-8 text-center">
         <h1 className="text-2xl font-bold mb-4">
-          QuickBite Firebase Check
+          DailyCart Firebase Check
         </h1>
         <p>{status}</p>
       </div>

@@ -1,16 +1,16 @@
-# 🛒 QuickBite
+# 🛒 DailyCart
 
 ### Fresh Groceries. Fast Delivery. Easy Living.
 
-QuickBite is a modern grocery delivery platform focused on making everyday shopping convenient, reliable, and accessible. Customers can browse grocery essentials, place orders, and track deliveries, while administrators and delivery personnel manage the complete order fulfillment process.
+DailyCart is a modern grocery delivery platform focused on making everyday shopping convenient, reliable, and accessible. Customers can browse grocery essentials, place orders, and track deliveries, while administrators and delivery personnel manage the complete order fulfillment process.
 
-QuickBite is being developed as a startup product with a focus on seamless shopping experiences, efficient operations, and reliable last-mile delivery.
+DailyCart is being developed as a startup product with a focus on seamless shopping experiences, efficient operations, and reliable last-mile delivery.
 
 ---
 
 ## 🚀 Platform Overview
 
-QuickBite consists of three integrated systems:
+DailyCart consists of three integrated systems:
 
 - **Customer Application** – A shopping platform where customers browse products, manage carts, place orders, and track deliveries.
 - **Admin Dashboard** – A centralized management platform for handling products, orders, and delivery personnel.
@@ -80,10 +80,10 @@ QuickBite consists of three integrated systems:
 
 ## 🏗️ Application Architecture
 
-QuickBite uses a separate customer application and admin dashboard connected to a shared Firebase backend.
+DailyCart uses a separate customer application and admin dashboard connected to a shared Firebase backend.
 
 ```text
-                 QUICKBITE PLATFORM
+                 DailyCart PLATFORM
                          |
              +-----------+-----------+
              |                       |
@@ -111,7 +111,7 @@ QuickBite uses a separate customer application and admin dashboard connected to 
 ```text
 QuickBite/
 │
-├── quickbite/
+├── QuickBite/
 │   ├── app/
 │   ├── components/
 │   ├── context/
@@ -119,7 +119,7 @@ QuickBite/
 │   ├── lib/
 │   └── public/
 │
-└── quickbite-admin/
+└── QuickBite-admin/
     ├── app/
     ├── components/
     ├── lib/
@@ -142,9 +142,9 @@ The delivery personnel interface is integrated into the customer application wit
 ### Customer Application
 
 ```bash
-git clone https://github.com/redux-next/quickbite.git
+git clone https://github.com/redux-next/QuickBite.git
 
-cd quickbite
+cd QuickBite
 
 npm install
 
@@ -154,9 +154,9 @@ npm run dev
 ### Admin Dashboard
 
 ```bash
-git clone https://github.com/redux-next/quickbite-admin.git
+git clone https://github.com/redux-next/QuickBite-admin.git
 
-cd quickbite-admin
+cd QuickBite-admin
 
 npm install
 
@@ -191,7 +191,7 @@ Additional server-side configuration may include:
 
 ## 🔐 Security & Access Control
 
-QuickBite implements security mechanisms designed to protect customer information and platform operations.
+DailyCart implements security mechanisms designed to protect customer information and platform operations.
 
 - Firebase Authentication for account management.
 - Firebase Admin SDK for trusted server-side operations.
@@ -205,7 +205,7 @@ QuickBite implements security mechanisms designed to protect customer informatio
 
 ## 📌 Development Roadmap
 
-QuickBite is an actively developed startup platform. Future development will focus on improving the customer experience, delivery operations, and platform capabilities.
+DailyCart is an actively developed startup platform. Future development will focus on improving the customer experience, delivery operations, and platform capabilities.
 
 Potential areas of development include:
 
@@ -220,22 +220,22 @@ Potential areas of development include:
 
 ## 👨‍💻 Development Team
 
-QuickBite is developed and maintained by:
+DailyCart is developed and maintained by:
 
 | Name | Role |
 |---|---|
 | **Gyanam Gogoi** | Full-Stack Developer |
 | **Oisik Gogoi** | Full-Stack Developer |
 
-Both contributors are involved in the development of the QuickBite platform.
+Both contributors are involved in the development of the DailyCart platform.
 
 ---
 
 ## 🔒 Proprietary & Confidential
 
-© 2026 QuickBite. All rights reserved.
+© 2026 DailyCart. All rights reserved.
 
-QuickBite is a privately developed startup project. The source code, application architecture, designs, branding, business logic, and associated materials are proprietary.
+DailyCart is a privately developed startup project. The source code, application architecture, designs, branding, business logic, and associated materials are proprietary.
 
 This repository is intended exclusively for authorized contributors and development purposes.
 
@@ -244,6 +244,6 @@ Unauthorized copying, redistribution, modification, publication, or commercial u
 ---
 
 <p align="center">
-  <b>QUICKBITE</b><br/>
+  <b>DailyCart</b><br/>
   Fresh Groceries. Fast Delivery. Easy Living.
 </p>

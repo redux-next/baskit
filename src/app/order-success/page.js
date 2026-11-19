@@ -16,7 +16,7 @@ export default async function OrderSuccessPage({ searchParams }) {
         </div>
 
         <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-green-700">
-          QuickBite
+          DailyCart
         </p>
 
         <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900 mt-2 sm:mt-3">

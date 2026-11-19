@@ -261,7 +261,7 @@ export default function OrderTrackingClient({ orderId }) {
 
         <div className="mt-5 sm:mt-7">
           <p className="text-xs font-bold tracking-wider text-green-700">
-            QUICKBITE
+            DailyCart
           </p>
 
           <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-2">
@@ -341,7 +341,7 @@ export default function OrderTrackingClient({ orderId }) {
                 </h2>
 
                 <p className="text-xs text-green-700 mt-1">
-                  Thank you for shopping with QuickBite.
+                  Thank you for shopping with DailyCart.
                 </p>
               </div>
             </div>

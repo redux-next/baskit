@@ -646,7 +646,7 @@ export default function DeliveryDashboardClient() {
 
   async function handleLogout() {
     const confirmed = window.confirm(
-      "Are you sure you want to log out of QuickBite Delivery?"
+      "Are you sure you want to log out of DailyCart Delivery?"
     );
 
     if (!confirmed) return;
@@ -698,7 +698,7 @@ export default function DeliveryDashboardClient() {
           </div>
 
           <h1 className="mt-5 text-2xl font-bold text-gray-900">
-            QuickBite Delivery
+            DailyCart Delivery
           </h1>
 
           <p className="mt-3 text-sm text-gray-500">
@@ -766,7 +766,7 @@ export default function DeliveryDashboardClient() {
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm font-semibold text-green-700">
-              QUICKBITE DELIVERY
+              DailyCart DELIVERY
             </p>
 
             <h1 className="mt-1 text-3xl font-bold text-gray-900">

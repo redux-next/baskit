@@ -4,7 +4,7 @@ import { FieldValue } from "firebase-admin/firestore";
 
 import { adminAuth, adminDb } from "../../../lib/firebase-admin";
 
-// QuickBite service area: Chabua Town, Assam.
+// DailyCart service area: Chabua Town, Assam.
 const SERVICE_AREA = {
   name: "Chabua Town",
   latitude: 27.48253,
@@ -382,7 +382,7 @@ export async function POST(request) {
         400,
       ],
       OUTSIDE_SERVICE_AREA: [
-        "Sorry! QuickBite currently delivers only within 10 km of Chabua Town.",
+        "Sorry! DailyCart currently delivers only within 10 km of Chabua Town.",
         403,
       ],
       PRODUCT_NOT_FOUND: [

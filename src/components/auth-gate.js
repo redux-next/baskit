@@ -110,7 +110,7 @@ export default function AuthGate({ children }) {
           <div className="h-9 w-9 mx-auto rounded-full border-4 border-green-200 border-t-green-600 animate-spin" />
 
           <p className="mt-4 text-sm text-gray-500">
-            Loading QuickBite...
+            Loading DailyCart...
           </p>
         </div>
       </main>

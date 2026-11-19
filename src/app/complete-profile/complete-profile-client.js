@@ -165,7 +165,7 @@ export default function CompleteProfilePage() {
     POSITION_UNAVAILABLE: err.POSITION_UNAVAILABLE,
     TIMEOUT: err.TIMEOUT,
     userAgent: navigator.userAgent,
-    isAndroidApp: navigator.userAgent.includes("BaskitAndroidApp"),
+    isAndroidApp: navigator.userAgent.includes("QuickBiteAndroidApp"),
   })
 );
         let message =
@@ -282,7 +282,7 @@ export default function CompleteProfilePage() {
             </div>
 
             <span className="text-2xl font-extrabold text-gray-900">
-              Quick<span className="text-green-600">Bite</span>
+              Daily<span className="text-green-600">Cart</span>
             </span>
           </div>
 
@@ -313,7 +313,7 @@ export default function CompleteProfilePage() {
 
             <div className="min-w-0">
               <p className="font-semibold text-gray-900 truncate">
-                {user?.displayName || "QuickBite customer"}
+                {user?.displayName || "DailyCart customer"}
               </p>
 
               <p className="text-xs text-gray-500 truncate">

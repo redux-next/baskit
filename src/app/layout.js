@@ -19,25 +19,26 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "QuickBite | Grocery Delivery",
+  title: "DailyCart",
   description:
     "Fresh groceries and everyday essentials delivered to your doorstep.",
 
-  applicationName: "QuickBite",
+  applicationName: "DailyCart",
   manifest: "/manifest.json",
+  openGraph: {
+    title: "DailyCart",
+    description:
+      "Fresh groceries and everyday essentials delivered to your doorstep.",
+  },
 
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "QuickBite",
+    title: "DailyCart",
   },
 
   icons: {
-    icon: [
-      { url: "/icons/icon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" },
-    ],
-    apple: "/icons/apple-touch-icon.png",
+    icon: "/favicon.ico",
   },
 };
 

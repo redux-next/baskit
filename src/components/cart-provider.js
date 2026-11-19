@@ -13,8 +13,8 @@ import {
 import { useAuth } from "./auth-provider";
 
 const CartContext = createContext(null);
-const guestCartStorageKey = "quickbite-cart-guest";
-const legacyCartStorageKey = "quickbite-cart";
+const guestCartStorageKey = "QuickBite-cart-guest";
+const legacyCartStorageKey = "QuickBite-cart";
 
 function validateCart(savedCart) {
   if (

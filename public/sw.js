@@ -1,11 +1,12 @@
 
-const CACHE_NAME = "quickbite-v1";
+const CACHE_NAME = "dailycart-v2";
+const LEGACY_CACHE_PREFIXES = ["QuickBite-", "quickbite-"];
 const OFFLINE_URL = "/offline.html";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.add(OFFLINE_URL);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      await cache.add(OFFLINE_URL);
     })
   );
 
@@ -17,7 +18,16 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((cacheNames) =>
       Promise.all(
         cacheNames
-          .filter((name) => name.startsWith("quickbite-") && name !== CACHE_NAME)
+          .filter(
+            (name) =>
+              (
+                name.startsWith("dailycart-") ||
+                LEGACY_CACHE_PREFIXES.some((prefix) =>
+                  name.startsWith(prefix)
+                )
+              ) &&
+              name !== CACHE_NAME
+          )
           .map((name) => caches.delete(name))
       )
     )
@@ -38,25 +48,26 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Never cache APIs, authentication or order-related requests.
-  if (
-    url.pathname.startsWith("/api/") ||
-    url.pathname.startsWith("/login") ||
-    url.pathname.startsWith("/orders") ||
-    url.pathname.startsWith("/track-order")
-  ) {
+  // Never intercept API requests or sensitive data requests.
+  if (url.pathname.startsWith("/api/")) {
     return;
   }
 
-  // Navigation: network first, offline fallback.
+  // Navigation: network first, offline page as fallback.
+  // This also handles login, orders and tracking pages.
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request).catch(async () => {
+        const cache = await caches.open(CACHE_NAME);
+        const offlinePage = await cache.match(OFFLINE_URL);
+
         return (
-          (await caches.match(OFFLINE_URL)) ||
-          new Response("You are offline.", {
+          offlinePage ||
+          new Response("You are offline. Please try again.", {
             status: 503,
-            headers: { "Content-Type": "text/plain" }
+            headers: {
+              "Content-Type": "text/plain; charset=utf-8",
+            },
           })
         );
       })
@@ -72,13 +83,15 @@ self.addEventListener("fetch", (event) => {
   ) {
     event.respondWith(
       caches.match(request).then(async (cachedResponse) => {
-        if (cachedResponse) return cachedResponse;
+        if (cachedResponse) {
+          return cachedResponse;
+        }
 
         const response = await fetch(request);
 
         if (response.ok) {
           const cache = await caches.open(CACHE_NAME);
-          cache.put(request, response.clone());
+          await cache.put(request, response.clone());
         }
 
         return response;

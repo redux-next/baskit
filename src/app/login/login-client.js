@@ -116,7 +116,7 @@ export default function LoginClient() {
         <div className="text-center">
           <div className="h-9 w-9 mx-auto rounded-full border-4 border-green-200 border-t-green-600 animate-spin" />
           <p className="mt-4 text-sm text-gray-500">
-            {user ? "Taking you to QuickBite..." : "Loading..."}
+            {user ? "Taking you to DailyCart..." : "Loading..."}
           </p>
         </div>
       </main>
@@ -133,7 +133,7 @@ export default function LoginClient() {
           </div>
 
           <span className="text-2xl font-extrabold tracking-tight text-gray-900">
-            Quick<span className="text-green-600">Bite</span>
+            Daily<span className="text-green-600">Cart</span>
           </span>
         </Link>
 
@@ -145,7 +145,7 @@ export default function LoginClient() {
             </div>
 
             <h1 className="text-2xl font-bold text-gray-900">
-              Welcome to QuickBite
+              Welcome to DailyCart
             </h1>
 
             <p className="text-sm text-gray-500 mt-2 leading-6">

@@ -330,7 +330,7 @@ export default function CheckoutPageClient() {
             <span className="text-xl sm:text-2xl">🛍️</span>
 
             <span className="text-lg sm:text-xl font-extrabold text-green-700">
-              QuickBite
+              DailyCart
             </span>
           </Link>
 

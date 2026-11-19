@@ -2,7 +2,7 @@ import ProductCardSkeleton from "./product-card-skeleton";
 
 export default function StorefrontLoading() {
   return (
-    <main className="storefront" aria-busy="true" aria-label="Loading Quickbite">
+    <main className="storefront" aria-busy="true" aria-label="Loading DailyCart">
       <div className="announcement">
         <span className="announcement-sparkle">✳</span>
         A little less waiting, a lot more living.

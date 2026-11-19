@@ -78,7 +78,7 @@ export async function DELETE(request) {
 
     return NextResponse.json({
       success: true,
-      message: "Your QuickBite account and saved data have been deleted.",
+      message: "Your DailyCart account and saved data have been deleted.",
     });
   } catch (error) {
     console.error("Account deletion failed:", error);

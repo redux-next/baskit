@@ -1,9 +1,9 @@
 
 {
   "id": "/",
-  "name": "QuickBite - Grocery Delivery",
-  "short_name": "QuickBite",
-  "description": "Fresh groceries delivered to your doorstep.",
+  "name": "DailyCart",
+  "short_name": "DailyCart",
+  "description": "Fresh groceries and everyday essentials delivered to your doorstep.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -13,9 +13,9 @@
   "categories": ["shopping", "food"],
   "icons": [
     {
-      "src": "/icons/icon.svg",
+      "src": "/favicon.ico",
       "sizes": "any",
-      "type": "image/svg+xml",
+      "type": "image/x-icon",
       "purpose": "any"
     }
   ]

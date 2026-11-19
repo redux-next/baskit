@@ -191,7 +191,7 @@ export default function Home() {
 
           setVerifiedDeliveryRole(isDelivery);
 
-          console.log("QuickBite role verification:", {
+          console.log("DailyCart role verification:", {
             uid: user.uid,
             email: user.email,
             deliveryBoy: isDelivery,
@@ -372,12 +372,12 @@ export default function Home() {
       </div>
 
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Quickbite home">
+        <a className="brand" href="#top" aria-label="DailyCart home">
           <span className="brand-mark">
             <span />
           </span>
           <span>
-            quickbite<span className="brand-period">.</span>
+            DailyCart<span className="brand-period">.</span>
           </span>
         </a>
 
@@ -507,7 +507,7 @@ export default function Home() {
 
                     <div style={{ minWidth: 0 }}>
                       <strong style={{ display: "block" }}>
-                        {user.displayName || "Quickbite customer"}
+                        {user.displayName || "DailyCart customer"}
                       </strong>
 
                       <span
@@ -652,7 +652,7 @@ export default function Home() {
                       marginBottom: "6px",
                     }}
                   >
-                    Welcome to Quickbite!
+                    Welcome to DailyCart!
                   </strong>
 
                   <p
@@ -722,7 +722,7 @@ export default function Home() {
       <div className="page-shell" id="top">
         <section
           className="hero"
-          aria-label="Quickbite delivery offer"
+          aria-label="DailyCart delivery offer"
         >
           <div className="hero-copy">
 <span className="hero-kicker">
@@ -1194,7 +1194,7 @@ export default function Home() {
 
         <footer className="site-footer">
           <a className="footer-brand" href="#top">
-            quickbite<span>.</span>
+            DailyCart<span>.</span>
           </a>
 
           <span>Good things, delivered within 10 km of Chabua Town.</span>

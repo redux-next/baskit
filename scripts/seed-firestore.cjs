@@ -218,7 +218,7 @@ async function seedFirestore() {
   await batch.commit();
 
   console.log("\n================================");
-  console.log("QUICKBITE FIRESTORE SEED SUCCESS");
+  console.log("DailyCart FIRESTORE SEED SUCCESS");
   console.log("================================");
   console.log(`Products uploaded: ${products.length}`);
   console.log(`Categories uploaded: ${categories.length}`);

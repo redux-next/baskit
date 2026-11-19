@@ -13,7 +13,7 @@ export default function DeleteAccountButton({ className = "" }) {
 
   async function handleDeleteAccount() {
     const confirmed = window.confirm(
-      "Permanently delete your QuickBite account, saved profile, and order history? This cannot be undone."
+      "Permanently delete your DailyCart account, saved profile, and order history? This cannot be undone."
     );
 
     if (!confirmed) return;

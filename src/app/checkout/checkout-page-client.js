@@ -107,7 +107,7 @@ export default function CheckoutClient() {
     0
   );
 
-  // Current QuickBite delivery policy.
+  // Current DailyCart delivery policy.
   const deliveryFee =
     subtotal === 0 || subtotal >= 299 ? 0 : 19;
 
@@ -219,7 +219,7 @@ export default function CheckoutClient() {
             href="/"
             className="text-2xl font-extrabold tracking-tight text-gray-900"
           >
-            quickbite<span className="text-green-600">.</span>
+            DailyCart<span className="text-green-600">.</span>
           </Link>
 
           <Link

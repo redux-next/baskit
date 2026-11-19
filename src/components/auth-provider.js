@@ -24,18 +24,18 @@ import { auth, googleProvider } from "../lib/firebase";
 
 const AuthContext = createContext(null);
 
-// Detect the actual Baskit Android WebView, not ordinary mobile Chrome.
-function isBaskitAndroidApp() {
+// Detect the existing Android app WebView, not ordinary mobile Chrome.
+function isDailyCartAndroidApp() {
   if (typeof navigator === "undefined") return false;
 
-  return navigator.userAgent.includes("BaskitAndroidApp");
+  return navigator.userAgent.includes("QuickBiteAndroidApp");
 }
 
 // Request a Google ID token from the native Android application.
 function requestNativeGoogleToken() {
   return new Promise((resolve, reject) => {
-    if (!isBaskitAndroidApp()) {
-      reject(new Error("Baskit Android app was not detected."));
+    if (!isDailyCartAndroidApp()) {
+      reject(new Error("DailyCart Android app was not detected."));
       return;
     }
 
@@ -80,7 +80,7 @@ function requestNativeGoogleToken() {
 
     try {
       // Android intercepts this URL and opens Credential Manager.
-      window.location.href = "baskit://google-sign-in";
+      window.location.href = "QuickBite://google-sign-in";
     } catch (error) {
       finish(reject, error);
     }
@@ -144,12 +144,12 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Google Sign-In:
-  // Native Credential Manager in Baskit Android app.
+  // Native Credential Manager in the Android app.
   // Firebase popup in normal browsers.
   const loginWithGoogle = useCallback(async () => {
     let result;
 
-    if (isBaskitAndroidApp()) {
+    if (isDailyCartAndroidApp()) {
       const idToken = await requestNativeGoogleToken();
 
       const credential =

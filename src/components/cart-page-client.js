@@ -98,7 +98,7 @@ export default function CartPageClient() {
             href="/"
             className="text-xl font-extrabold tracking-tight text-gray-900 sm:text-2xl"
           >
-            quickbite<span className="text-green-600">.</span>
+            DailyCart<span className="text-green-600">.</span>
           </Link>
 
           <Link
