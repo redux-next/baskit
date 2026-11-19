@@ -156,7 +156,15 @@ export default function CompleteProfilePage() {
         }
       },
       (err) => {
-        console.error("GPS error:", err);
+        console.error("GPS error details:", {
+  code: err.code,
+  message: err.message,
+  PERMISSION_DENIED: err.PERMISSION_DENIED,
+  POSITION_UNAVAILABLE: err.POSITION_UNAVAILABLE,
+  TIMEOUT: err.TIMEOUT,
+  userAgent: navigator.userAgent,
+  isAndroidApp: navigator.userAgent.includes("BaskitAndroidApp"),
+});
 
         let message =
           "Unable to detect your location. Please enter your address manually.";
