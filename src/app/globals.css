@@ -23,6 +23,57 @@
   box-sizing: border-box;
 }
 
+@keyframes auth-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-enter {
+  animation: auth-fade-up 560ms cubic-bezier(0.2, 0.7, 0.25, 1) both;
+}
+
+.auth-enter-delay {
+  animation-delay: 90ms;
+}
+
+.auth-small-button {
+  color: #28764c;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.auth-small-button:hover {
+  color: #155d38;
+}
+
+.auth-password-toggle {
+  color: #758178;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.auth-password-toggle:hover {
+  color: #176344;
+}
+
+@media (max-width: 639px) and (max-height: 640px) {
+  .auth-short-screen-footer {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-enter {
+    animation: none;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

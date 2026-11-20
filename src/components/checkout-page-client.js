@@ -16,6 +16,47 @@ function formatPrice(value) {
   return `₹${Number(value || 0).toLocaleString("en-IN")}`;
 }
 
+function getCheckoutAttempt(uid, cart, paymentMethod) {
+  const storageKey = `dailycart-checkout:${uid}`;
+  const payload = JSON.stringify({
+    cart: Object.entries(cart).sort(([left], [right]) =>
+      left.localeCompare(right)
+    ),
+    paymentMethod,
+  });
+  const storedAttempt = window.sessionStorage.getItem(storageKey);
+
+  if (storedAttempt) {
+    try {
+      const attempt = JSON.parse(storedAttempt);
+
+      if (
+        attempt.payload === payload &&
+        typeof attempt.key === "string" &&
+        /^[A-Za-z0-9_-]{16,128}$/.test(attempt.key)
+      ) {
+        return { key: attempt.key, storageKey };
+      }
+    } catch (error) {
+      console.error("Unable to read the saved checkout attempt:", error);
+    }
+  }
+
+  if (!window.crypto?.randomUUID) {
+    throw new Error(
+      "Secure checkout is unavailable in this browser. Please update your browser and retry."
+    );
+  }
+
+  const key = window.crypto.randomUUID();
+  window.sessionStorage.setItem(
+    storageKey,
+    JSON.stringify({ key, payload })
+  );
+
+  return { key, storageKey };
+}
+
 export default function CheckoutPageClient() {
   const router = useRouter();
 
@@ -213,6 +254,11 @@ export default function CheckoutPageClient() {
     try {
       setPlacingOrder(true);
 
+      const checkoutAttempt = getCheckoutAttempt(
+        user.uid,
+        cart,
+        paymentMethod
+      );
       const idToken = await user.getIdToken();
 
       const response = await fetch("/api/orders", {
@@ -220,6 +266,7 @@ export default function CheckoutPageClient() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${idToken}`,
+          "Idempotency-Key": checkoutAttempt.key,
         },
         body: JSON.stringify({
           cart,
@@ -233,6 +280,12 @@ export default function CheckoutPageClient() {
         throw new Error(
           result.message || "Unable to place your order."
         );
+      }
+
+      try {
+        window.sessionStorage.removeItem(checkoutAttempt.storageKey);
+      } catch (error) {
+        console.error("Unable to clear the completed checkout attempt:", error);
       }
 
       clearCart();

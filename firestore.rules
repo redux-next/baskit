@@ -1,0 +1,140 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() &&
+        'admin' in request.auth.token &&
+        request.auth.token.admin == true;
+    }
+
+    function isDeliveryPartner() {
+      return signedIn() &&
+        'deliveryBoy' in request.auth.token &&
+        request.auth.token.deliveryBoy == true;
+    }
+
+    function ownsUser(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function ownsOrder(order) {
+      return signedIn() && order.userId == request.auth.uid;
+    }
+
+    function isAssignedDeliveryPartner(order) {
+      return isDeliveryPartner() && order.deliveryBoyId == request.auth.uid;
+    }
+
+    function profileFields() {
+      return [
+        'uid',
+        'name',
+        'email',
+        'photoURL',
+        'phoneNumber',
+        'address',
+        'pincode',
+        'location',
+        'profileCompleted',
+        'createdAt',
+        'updatedAt'
+      ];
+    }
+
+    function editableProfileFields() {
+      return [
+        'name',
+        'email',
+        'photoURL',
+        'phoneNumber',
+        'address',
+        'pincode',
+        'location',
+        'profileCompleted',
+        'updatedAt'
+      ];
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow get: if isAdmin() || ownsUser(userId);
+      allow list: if isAdmin();
+      allow create: if isAdmin() || (
+        ownsUser(userId) &&
+        request.resource.data.keys().hasOnly(profileFields()) &&
+        request.resource.data.uid == request.auth.uid
+      );
+      allow update: if isAdmin() || (
+        ownsUser(userId) &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(editableProfileFields()) &&
+        request.resource.data.uid == request.auth.uid
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /carts/{userId} {
+      allow get: if isAdmin() || ownsUser(userId);
+      allow list: if isAdmin();
+      allow create: if isAdmin() || (
+        ownsUser(userId) &&
+        request.resource.data.keys().hasOnly(['items', 'updatedAt']) &&
+        request.resource.data.items is map
+      );
+      allow update: if isAdmin() || (
+        ownsUser(userId) &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['items', 'updatedAt']) &&
+        request.resource.data.keys().hasOnly(['items', 'updatedAt']) &&
+        request.resource.data.items is map
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /orders/{orderId} {
+      allow get, list: if isAdmin() ||
+        ownsOrder(resource.data) ||
+        isAssignedDeliveryPartner(resource.data);
+      allow write: if isAdmin();
+    }
+
+    match /deliveryLocations/{orderId} {
+      allow get: if isAdmin() ||
+        ownsOrder(
+          get(/databases/$(database)/documents/orders/$(orderId)).data
+        ) ||
+        isAssignedDeliveryPartner(
+          get(/databases/$(database)/documents/orders/$(orderId)).data
+        );
+      allow list: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /deliveryPersonnel/{userId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow get: if isAdmin() || settingId == 'connection-check';
+      allow list, write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

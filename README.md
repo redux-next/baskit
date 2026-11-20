@@ -191,15 +191,47 @@ Additional server-side configuration may include:
 
 ## 🔐 Security & Access Control
 
-DailyCart implements security mechanisms designed to protect customer information and platform operations.
+The customer application deploys `firestore.rules` and `storage.rules` through the Firebase CLI. Firestore authorization uses Firebase Authentication UID ownership and server-issued custom claims; a profile field such as `role` is never an authorization source.
 
-- Firebase Authentication for account management.
-- Firebase Admin SDK for trusted server-side operations.
-- Secure session-cookie authentication for administrators.
-- Role-based access control for delivery personnel.
-- Protected administrative API routes.
-- Server-side order and payment validation.
-- Environment-based secret management.
+| Collection | Customer | Delivery partner | Admin (`admin: true`) |
+|---|---|---|---|
+| `products`, `categories` | Public read | Public read | Read and write |
+| `users/{uid}` | Read and edit own profile fields only | No customer-profile access | Read and write |
+| `carts/{uid}` | Read and edit own cart only | No access | Read and write |
+| `orders/{id}` | Read orders with matching `userId` | Read orders assigned by `deliveryBoyId` | Read and write |
+| `deliveryLocations/{orderId}` | Read only when the linked order belongs to them | Read only when assigned to the linked order | Read and write |
+| `deliveryPersonnel/{uid}` | No access | No access | Read and write |
+| `settings/connection-check` | Read only that probe document | Read only that probe document | Read and write |
+
+Client writes to orders and delivery locations are denied. Order creation, stock deduction, assignment/status/payment changes, and delivery GPS writes must go through authenticated server APIs using Firebase Admin. Those APIs bypass Firestore rules and must enforce their own authorization; the customer app's delivery endpoints check the `deliveryBoy: true` claim and assignment, and the admin test endpoint checks `admin: true`. The final Firestore match denies any unspecified collection or operation.
+
+Order placement requires a client-generated idempotency key, retained in the tab's session storage for retries of the same cart and payment method. The server scopes the key to the authenticated customer and stores a hash of the normalized checkout payload. The order, key record, stock deductions, and cart deletion commit in one Firestore transaction. A matching retry returns the original order; reusing the key with a different payload is rejected. Prices and fees continue to come from server-read product and checkout policy data.
+
+The customer profile rule permits only the profile fields currently written by the profile form (`uid`, name/contact/address/location, profile completion, and timestamps); it does not permit role or privilege fields. The cart rule permits only `items` and `updatedAt`. Account deletion remains server-side. The `admin` and `deliveryBoy` claims must be granted or revoked through trusted Firebase Admin operations, never by client writes.
+
+The application currently has no Firebase Storage object reads or writes. Storage rules therefore deny all access. If a Firebase Storage upload feature is added, define its object paths, ownership, size, and content-type requirements before relaxing this rule.
+
+### Rules tests and deployment
+
+Install dependencies and run the Firestore and Storage emulator tests with a Java runtime available:
+
+```bash
+npm install
+npm run test:firebase-rules
+npm run test:order-idempotency
+```
+
+The test command uses the isolated `demo-dailycart-rules` emulator project and does not access production. It was validated with Java 21. This repository does not select a default Firebase project because the production project ID is environment-specific.
+
+After reviewing the rules and tests, deploy explicitly to the intended project:
+
+```bash
+npx firebase-tools deploy --only firestore:rules,storage --project YOUR_FIREBASE_PROJECT_ID
+```
+
+No rules are deployed automatically. Confirm the selected project ID before running the deploy command.
+
+Before deploying, confirm that existing production orders use the `userId` and `deliveryBoyId` fields used by this application, that every intended administrator has the server-issued `admin: true` claim, and that no separate admin application depends on Firebase Storage. The separate admin dashboard is not part of this repository; although the customer app has no Firebase Storage object calls, the platform overview describes image uploads. The checked-in Storage rule intentionally denies those operations until their path and authorization model are reviewed.
 
 ---
 
