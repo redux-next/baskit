@@ -2,11 +2,12 @@
 const CACHE_NAME = "dailycart-v2";
 const LEGACY_CACHE_PREFIXES = ["QuickBite-", "quickbite-"];
 const OFFLINE_URL = "/offline.html";
+const OFFLINE_BRAND_URL = "/dailycart_loading_logo.png";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      await cache.add(OFFLINE_URL);
+      await cache.addAll([OFFLINE_URL, OFFLINE_BRAND_URL]);
     })
   );
 
@@ -50,6 +51,16 @@ self.addEventListener("fetch", (event) => {
 
   // Never intercept API requests or sensitive data requests.
   if (url.pathname.startsWith("/api/")) {
+    return;
+  }
+
+  if (url.pathname === OFFLINE_BRAND_URL) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then(async (cache) => {
+        const cachedLogo = await cache.match(OFFLINE_BRAND_URL);
+        return cachedLogo || fetch(request);
+      })
+    );
     return;
   }
 

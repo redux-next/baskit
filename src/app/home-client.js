@@ -362,14 +362,7 @@ export default function Home() {
   }
 
   return (
-    <main
-  className={`storefront ${
-    typeof window !== "undefined" &&
-    window.matchMedia("(display-mode: standalone)").matches
-      ? "pwa-mode"
-      : ""
-  }`}
->
+    <main className="storefront">
       <div className="announcement">
         <span className="announcement-sparkle">✳</span>
         A little less waiting, a lot more living.
@@ -378,354 +371,277 @@ export default function Home() {
 </span>
       </div>
 
-      <header className="site-header">
-<Link
-  className="brand"
-  href="#top"
-  aria-label="DailyCart home"
-  style={{
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    margin: 0,
-    padding: 0,
-    flexShrink: 0,
-    lineHeight: 0,
-    textDecoration: "none",
-  }}
->
-  <div
-    style={{
-      position: "relative",
-      width: "180px",
-      height: "55px",
-      overflow: "hidden",
-      backgroundColor: "#f6f8f4",
-      borderRadius: "6px",
-      margin: 0,
-      padding: 0,
-    }}
+
+<header className="site-header">
+  {/* Brand */}
+  <Link
+    className="brand"
+    href="#top"
+    aria-label="DailyCart home"
   >
-    <Image
-      src="/dailycart-logo.png"
-      alt="DailyCart"
-      fill
-      priority
-      sizes="180px"
-      style={{
-        objectFit: "cover",
-        objectPosition: "center",
-        margin: 0,
-        padding: 0,
-      }}
+    <div className="brand-logo-frame">
+      <Image
+        src="/dailycart-logo.png"
+        alt="DailyCart"
+        fill
+        priority
+        sizes="(max-width: 600px) 140px, 180px"
+        style={{ objectFit: "cover", objectPosition: "center" }}
+      />
+    </div>
+  </Link>
+
+  {/* Search */}
+  <form
+    className="search-box"
+    role="search"
+    onSubmit={submitSearch}
+  >
+    <Icon name="search" size={20} />
+
+    <input
+      type="search"
+      placeholder="Search fruits, milk, snacks..."
+      aria-label="Search groceries"
+      value={search}
+      onChange={(event) => setSearch(event.target.value)}
     />
-  </div>
-</Link>
 
-        <form
-          className="search-box"
-          role="search"
-          onSubmit={submitSearch}
-        >
-          <Icon name="search" size={20} />
+    <button
+      className="search-submit-button"
+      type="submit"
+      aria-label="Search products"
+    >
+      Search
+    </button>
+  </form>
 
-          <input
-            type="search"
-            placeholder="Search for fruits, milk, snacks..."
-            aria-label="Search groceries"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
+  {/* Account */}
+  <div className="header-account-wrap">
+    <button
+      className="account-button"
+      type="button"
+      aria-label="Your account"
+      aria-expanded={accountMenuOpen}
+      onClick={() => {
+        setAccountMenuOpen((previous) => !previous);
+        setAuthError("");
+      }}
+    >
+      <span className="account-avatar">
+        {user?.displayName?.charAt(0)?.toUpperCase() || "A"}
+      </span>
 
-          <button
-            className="search-submit-button"
-            type="submit"
-            aria-label="Search products"
-          >
-            Search
-          </button>
-        </form>
+      <span className="account-label">
+        {user
+          ? user.displayName?.split(" ")[0] || "Account"
+          : "Sign in"}
+      </span>
 
-        <div style={{ position: "relative" }}>
-          <button
-            className="account-button"
-            type="button"
-            aria-label="Your account"
-            aria-expanded={accountMenuOpen}
-            onClick={() => {
-              setAccountMenuOpen((previous) => !previous);
-              setAuthError("");
-            }}
-          >
-            <span className="account-avatar">
-              {user?.displayName?.charAt(0)?.toUpperCase() || "A"}
-            </span>
+      <Icon name="chevron" size={15} />
+    </button>
 
-            <span>
-              {user
-                ? user.displayName?.split(" ")[0] || "Account"
-                : "Sign in"}
-            </span>
-          </button>
-
-          {accountMenuOpen && (
+    {accountMenuOpen && (
+      <div className="account-dropdown" role="dialog" aria-label="Account menu">
+        {user ? (
+          <>
             <div
-              role="dialog"
-              aria-label="Account menu"
               style={{
-                position: "absolute",
-                top: "calc(100% + 12px)",
-                right: 0,
-                width: "270px",
-                padding: "18px",
-                background: "#ffffff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "14px",
-                boxShadow: "0 12px 35px rgba(0,0,0,0.12)",
-                zIndex: 100,
-                color: "#202820",
+                display: "flex",
+                gap: "12px",
+                alignItems: "center",
               }}
             >
-              {user ? (
-                <>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "12px",
-                      alignItems: "center",
-                    }}
-                  >
-                    {user.photoURL ? (
-                      <img
-                        src={user.photoURL}
-                        alt=""
-                        referrerPolicy="no-referrer"
-                        style={{
-                          width: "42px",
-                          height: "42px",
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    ) : (
-                      <span className="account-avatar">
-                        {user.displayName
-                          ?.charAt(0)
-                          ?.toUpperCase() || "A"}
-                      </span>
-                    )}
-
-                    <div style={{ minWidth: 0 }}>
-                      <strong style={{ display: "block" }}>
-                        {user.displayName || "DailyCart customer"}
-                      </strong>
-
-                      <span
-                        style={{
-                          display: "block",
-                          fontSize: "12px",
-                          color: "#777",
-                          overflowWrap: "anywhere",
-                        }}
-                      >
-                        {user.email}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: "14px",
-                      padding: "11px",
-                      borderRadius: "10px",
-                      background: "#f5f8f3",
-                      fontSize: "12px",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    <strong
-                      style={{
-                        display: "block",
-                        marginBottom: "4px",
-                      }}
-                    >
-                      Delivery address
-                    </strong>
-
-                    <span
-                      style={{
-                        color: "#626b61",
-                        display: "block",
-                      }}
-                    >
-                      {profileLoading
-                        ? "Loading your saved address..."
-                        : customerProfile?.address
-                          ? `${customerProfile.address}${
-                              customerProfile.pincode
-                                ? `, ${customerProfile.pincode}`
-                                : ""
-                            }`
-                          : "No delivery address saved yet."}
-                    </span>
-
-                    {customerProfile?.location?.latitude != null &&
-                      customerProfile?.location?.longitude != null && (
-                        <a
-                          href={`https://www.google.com/maps?q=${customerProfile.location.latitude},${customerProfile.location.longitude}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{
-                            display: "inline-block",
-                            marginTop: "7px",
-                            color: "#278044",
-                            fontWeight: 700,
-                          }}
-                        >
-                          View saved GPS location ↗
-                        </a>
-                      )}
-
-                    <Link
-                      href="/complete-profile"
-                      onClick={() => setAccountMenuOpen(false)}
-                      style={{
-                        display: "block",
-                        marginTop: "8px",
-                        color: "#278044",
-                        fontWeight: 700,
-                      }}
-                    >
-                      Update address and profile →
-                    </Link>
-                  </div>
-
-                  <Link
-                    href="/orders"
-                    onClick={() => setAccountMenuOpen(false)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                      width: "100%",
-                      padding: "12px",
-                      marginTop: "12px",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "10px",
-                      color: "#202820",
-                      fontSize: "14px",
-                      fontWeight: 700,
-                      textDecoration: "none",
-                    }}
-                  >
-                    <span style={{ fontSize: "19px" }}>📦</span>
-                    My Orders
-                    <span style={{ marginLeft: "auto", color: "#278044" }}>
-                      →
-                    </span>
-                  </Link>
-
-                  <hr
-                    style={{
-                      margin: "16px 0",
-                      borderColor: "#eee",
-                    }}
-                  />
-
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    style={{
-                      width: "100%",
-                      padding: "11px",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "9px",
-                      background: "#fff",
-                      cursor: "pointer",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Sign out
-                  </button>
-
-                  {!isAdmin && !isDeliveryBoy && (
-                    <DeleteAccountButton
-                      className="delete-account-button"
-                    />
-                  )}
-                </>
+              {user.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt=""
+                  referrerPolicy="no-referrer"
+                  style={{
+                    width: "42px",
+                    height: "42px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                  }}
+                />
               ) : (
-                <>
-                  <strong
-                    style={{
-                      display: "block",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    Welcome to DailyCart!
-                  </strong>
-
-                  <p
-                    style={{
-                      fontSize: "13px",
-                      color: "#777",
-                      marginBottom: "15px",
-                    }}
-                  >
-                    Sign in to manage your account and delivery
-                    addresses.
-                  </p>
-
-                  <button
-                    type="button"
-                    onClick={handleGoogleSignIn}
-                    disabled={authLoading}
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "9px",
-                      background: "#fff",
-                      cursor: "pointer",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Continue with Google
-                  </button>
-                </>
+                <span className="account-avatar">
+                  {user.displayName?.charAt(0)?.toUpperCase() || "A"}
+                </span>
               )}
 
-              {authError && (
-                <p
-                  role="alert"
+              <div style={{ minWidth: 0 }}>
+                <strong style={{ display: "block" }}>
+                  {user.displayName || "DailyCart customer"}
+                </strong>
+                <span
                   style={{
-                    color: "#dc2626",
+                    display: "block",
                     fontSize: "12px",
-                    marginTop: "12px",
+                    color: "#777",
+                    overflowWrap: "anywhere",
                   }}
                 >
-                  {authError}
-                </p>
-              )}
+                  {user.email}
+                </span>
+              </div>
             </div>
-          )}
-        </div>
 
-        <Link
-          href="/cart"
-          className="header-cart"
-          aria-label={`My Cart, ${itemCount} items`}
-        >
-          <Icon name="cart" size={20} />
-          <span>My Cart</span>
+            <div
+              style={{
+                marginTop: "14px",
+                padding: "11px",
+                borderRadius: "10px",
+                background: "#f5f8f3",
+                fontSize: "12px",
+                lineHeight: 1.5,
+              }}
+            >
+              <strong style={{ display: "block", marginBottom: "4px" }}>
+                Delivery address
+              </strong>
+              <span style={{ color: "#626b61", display: "block" }}>
+                {profileLoading
+                  ? "Loading your saved address..."
+                  : customerProfile?.address
+                    ? `${customerProfile.address}${
+                        customerProfile.pincode
+                          ? `, ${customerProfile.pincode}`
+                          : ""
+                      }`
+                    : "No delivery address saved yet."}
+              </span>
 
-          {itemCount > 0 && (
-            <span className="header-cart-count">
-              {itemCount}
-            </span>
-          )}
-        </Link>
-      </header>
+              {customerProfile?.location?.latitude != null &&
+                customerProfile?.location?.longitude != null && (
+                  <a
+                    href={`https://www.google.com/maps?q=${customerProfile.location.latitude},${customerProfile.location.longitude}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      display: "inline-block",
+                      marginTop: "7px",
+                      color: "#278044",
+                      fontWeight: 700,
+                    }}
+                  >
+                    View saved GPS location ↗
+                  </a>
+                )}
+
+              <Link
+                href="/complete-profile"
+                onClick={() => setAccountMenuOpen(false)}
+                style={{
+                  display: "block",
+                  marginTop: "8px",
+                  color: "#278044",
+                  fontWeight: 700,
+                }}
+              >
+                Update address and profile →
+              </Link>
+            </div>
+
+            <Link
+              href="/orders"
+              onClick={() => setAccountMenuOpen(false)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                width: "100%",
+                padding: "12px",
+                marginTop: "12px",
+                border: "1px solid #e5e7eb",
+                borderRadius: "10px",
+                color: "#202820",
+                fontSize: "14px",
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              <span style={{ fontSize: "19px" }}>📦</span>
+              My Orders
+              <span style={{ marginLeft: "auto", color: "#278044" }}>→</span>
+            </Link>
+
+            <hr style={{ margin: "16px 0", borderColor: "#eee" }} />
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              style={{
+                width: "100%",
+                padding: "11px",
+                border: "1px solid #e5e7eb",
+                borderRadius: "9px",
+                background: "#fff",
+                cursor: "pointer",
+                fontWeight: 600,
+              }}
+            >
+              Sign out
+            </button>
+
+            {!isAdmin && !isDeliveryBoy && (
+              <DeleteAccountButton className="delete-account-button" />
+            )}
+          </>
+        ) : (
+          <>
+            <strong style={{ display: "block", marginBottom: "6px" }}>
+              Welcome to DailyCart!
+            </strong>
+            <p style={{ fontSize: "13px", color: "#777", marginBottom: "15px" }}>
+              Sign in to manage your account and delivery addresses.
+            </p>
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={authLoading}
+              style={{
+                width: "100%",
+                padding: "12px",
+                border: "1px solid #e5e7eb",
+                borderRadius: "9px",
+                background: "#fff",
+                cursor: "pointer",
+                fontWeight: 600,
+              }}
+            >
+              Continue with Google
+            </button>
+          </>
+        )}
+
+        {authError && (
+          <p
+            role="alert"
+            style={{ color: "#dc2626", fontSize: "12px", marginTop: "12px" }}
+          >
+            {authError}
+          </p>
+        )}
+      </div>
+    )}
+  </div>
+
+  {/* Cart */}
+  <Link
+    href="/cart"
+    className="header-cart"
+    aria-label={`My Cart, ${itemCount} items`}
+  >
+    <Icon name="cart" size={20} />
+    <span className="cart-label">My Cart</span>
+
+    {itemCount > 0 && (
+      <span className="header-cart-count">{itemCount}</span>
+    )}
+  </Link>
+</header>
+
 
       <div className="header-rule" />
 

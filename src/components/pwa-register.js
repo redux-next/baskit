@@ -5,6 +5,12 @@ import { useEffect } from "react";
 
 export default function PWARegister() {
   useEffect(() => {
+    try {
+      sessionStorage.removeItem("dailycart-offline-redirect");
+    } catch {
+      // Session storage is optional for PWA registration.
+    }
+
     if (!("serviceWorker" in navigator)) return;
 
     let registration;
