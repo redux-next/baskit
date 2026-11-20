@@ -142,7 +142,7 @@ The delivery personnel interface is integrated into the customer application wit
 ### Customer Application
 
 ```bash
-git clone https://github.com/redux-next/QuickBite.git
+git clone https://github.com/redux-next/baskit.git
 
 cd QuickBite
 
